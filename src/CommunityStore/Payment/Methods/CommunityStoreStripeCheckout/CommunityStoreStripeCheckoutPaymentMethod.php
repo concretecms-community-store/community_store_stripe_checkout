@@ -245,12 +245,18 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                 exit();
             }
 
+            $success = false;
+
             // Handle the checkout.session.completed event
             if ($event->type == 'checkout.session.completed') {
                 $session = $event->data->object;
                 $order = StoreOrder::getByID($session->client_reference_id);
-                $order->completeOrder($session->payment_intent);
-                $order->updateStatus(StoreOrderStatus::getStartingStatus()->getHandle());
+
+                if ($order) {
+                    $order->completeOrder($session->payment_intent);
+                    $order->updateStatus(StoreOrderStatus::getStartingStatus()->getHandle());
+                    $success = true;
+                }
             }
 
             // handle a refund
@@ -264,10 +270,15 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                     $order->setRefunded(new \DateTime());
                     $order->setRefundReason($session->refunds->data->reason);
                     $order->save();
+                    $success = true;
                 }
             }
 
-            http_response_code(200);
+            if ($success) {
+                http_response_code(200);
+            } else {
+                http_response_code(400);
+            }
         } else {
             http_response_code(400);
         }
