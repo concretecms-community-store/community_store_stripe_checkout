@@ -139,20 +139,21 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             $items = $order->getOrderItems();
             if ($items) {
                 foreach ($items as $item) {
-                    $imagesrc = '';
-                    $fileObj = $item->getProductObject()->getImageObj();
-                    if (is_object($fileObj)) {
-                        $imagesrc =  $fileObj->getURL();
-                    }
+
 
                     $stripeItem =
                         ['name' => $item->getProductName() . ($item->getSKU() ? '(' . $item->getSKU() . ')' : ''),
                             'amount' => round($item->getPricePaid() * $currencyMultiplier, 0),
-                            'images' => [$imagesrc],
                             'quantity' => $item->getQty(),
                             'currency' => $currency
-
                         ];
+
+                    $imagesrc = '';
+                    $fileObj = $item->getProductObject()->getImageObj();
+                    if (is_object($fileObj)) {
+                        $imagesrc =  $fileObj->getURL();
+                        $stripeItem['images'] = [$imagesrc];
+                    }
 
                     $options = $item->getProductOptions();
                     if ($options) {
