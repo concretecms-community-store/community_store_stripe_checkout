@@ -165,29 +165,31 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                             }
                             $stripeItem['description'] = implode("\n", $optionOutput);
                         }
-                        
+
                         $lineitems[] = $stripeItem;
                     }
                 }
             }
 
             if ($order->isShippable()) {
+                $shippingTotal = $order->getShippingTotal();
+                if ($shippingTotal > 0) {
+                    $shippingItem = [
+                        'name' => $order->getShippingMethodName(),
+                        'amount' => round($shippingTotal * $currencyMultiplier, 0),
+                        'currency' => $currency,
+                        'quantity' => 1
+                    ];
 
-                $shippingItem = [
-                    'name' => $order->getShippingMethodName(),
-                    'amount' => round($order->getShippingTotal() * $currencyMultiplier, 0),
-                    'currency' => $currency,
-                    'quantity' => 1
-                ];
-
-                $lineitems[] = $shippingItem;
+                    $lineitems[] = $shippingItem;
+                }
             }
 
             $taxes = $order->getTaxes();
 
             if (!empty($taxes)) {
                 foreach ($order->getTaxes() as $tax) {
-                    if ($tax['amount']) {
+                    if ($tax['amount'] && $tax['amount'] > 0) {
                         $taxItem = ['name' => $tax['label'],
                             'amount' => round($tax['amount'] * $currencyMultiplier, 0),
                             'currency' => $currency,
