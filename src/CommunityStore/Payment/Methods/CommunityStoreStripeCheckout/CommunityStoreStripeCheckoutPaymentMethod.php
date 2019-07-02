@@ -139,34 +139,35 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             $items = $order->getOrderItems();
             if ($items) {
                 foreach ($items as $item) {
+                    if ($item->getPricePaid() > 0) {
 
+                        $stripeItem =
+                            ['name' => $item->getProductName() . ($item->getSKU() ? '(' . $item->getSKU() . ')' : ''),
+                                'amount' => round($item->getPricePaid() * $currencyMultiplier, 0),
+                                'quantity' => $item->getQty(),
+                                'currency' => $currency
+                            ];
 
-                    $stripeItem =
-                        ['name' => $item->getProductName() . ($item->getSKU() ? '(' . $item->getSKU() . ')' : ''),
-                            'amount' => round($item->getPricePaid() * $currencyMultiplier, 0),
-                            'quantity' => $item->getQty(),
-                            'currency' => $currency
-                        ];
-
-                    $imagesrc = '';
-                    $fileObj = $item->getProductObject()->getImageObj();
-                    if (is_object($fileObj)) {
-                        $imagesrc =  $fileObj->getURL();
-                        $stripeItem['images'] = [$imagesrc];
-                    }
-
-                    $options = $item->getProductOptions();
-                    if ($options) {
-                        $optionOutput = [];
-                        foreach ($options as $option) {
-                            if ($option['oioValue']) {
-                                $optionOutput[] = $option['oioKey'] . ": " . $option['oioValue'];
-                            }
+                        $imagesrc = '';
+                        $fileObj = $item->getProductObject()->getImageObj();
+                        if (is_object($fileObj)) {
+                            $imagesrc = $fileObj->getURL();
+                            $stripeItem['images'] = [$imagesrc];
                         }
-                        $stripeItem['description'] = implode("\n", $optionOutput);
-                    }
 
-                    $lineitems[] = $stripeItem;
+                        $options = $item->getProductOptions();
+                        if ($options) {
+                            $optionOutput = [];
+                            foreach ($options as $option) {
+                                if ($option['oioValue']) {
+                                    $optionOutput[] = $option['oioKey'] . ": " . $option['oioValue'];
+                                }
+                            }
+                            $stripeItem['description'] = implode("\n", $optionOutput);
+                        }
+                        
+                        $lineitems[] = $stripeItem;
+                    }
                 }
             }
 
