@@ -27,7 +27,7 @@ extract($vars);
                             dataType: 'text',
                             success: function(data) {
                                 $.ajax({
-                                    url: '/checkout/stripecheckoutcreatesession',
+                                    url: '<?= \URL::to('/checkout/stripecheckoutcreatesession'); ?>',
                                     type: 'get',
                                     cache: false,
                                     dataType: 'text',
