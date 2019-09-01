@@ -163,7 +163,10 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                                     $optionOutput[] = $option['oioKey'] . ": " . $option['oioValue'];
                                 }
                             }
-                            $stripeItem['description'] = implode("\n", $optionOutput);
+
+                            if (count($optionOutput) > 0) {
+                                $stripeItem['description'] = implode("\n", $optionOutput);
+                            }
                         }
 
                         $lineitems[] = $stripeItem;

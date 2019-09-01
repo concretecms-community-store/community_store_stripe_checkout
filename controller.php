@@ -1,4 +1,4 @@
-<?php      
+<?php
 
 namespace Concrete\Package\CommunityStoreStripeCheckout;
 
@@ -11,7 +11,7 @@ class Controller extends Package
 {
     protected $pkgHandle = 'community_store_stripe_checkout';
     protected $appVersionRequired = '8.0';
-    protected $pkgVersion = '0.9.2';
+    protected $pkgVersion = '1.0';
     protected $packageDependencies = ['community_store'=>'2.0'];
 
     public function on_start()
@@ -34,7 +34,7 @@ class Controller extends Package
     {
         return t("Stripe Checkout Payment Method");
     }
-    
+
     public function install()
     {
         $pkg = parent::install();
