@@ -6,8 +6,6 @@ https://stripe.com/docs/payments/checkout
 This is a Strong Customer Authentication (SCA) complient payment method for Stripe, required by European regulation from September 2019.
 If your business is based in the European Economic Area (EEA) and you serve customers in the EEA, you are likely to need to update your Stripe integration to a SCA complient method such as this one.
 
-(this add-on can be installed alongside the existing Stripe gateway for testing/swap-over)
-
 ## Setup
 Install Community Store First.
 
