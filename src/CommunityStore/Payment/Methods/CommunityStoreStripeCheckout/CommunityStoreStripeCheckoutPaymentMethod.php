@@ -261,7 +261,11 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
 
                 if ($order) {
                     $order->completeOrder($session->payment_intent);
-                    $order->updateStatus(StoreOrderStatus::getStartingStatus()->getHandle());
+                    if ($order->isShippable()) {
+                        $order->updateStatus(StoreOrderStatus::getStartingStatus()->getHandle());
+                    } else {
+                        $order->updateStatus('delivered');
+                    }
                     $success = true;
                 }
             }
