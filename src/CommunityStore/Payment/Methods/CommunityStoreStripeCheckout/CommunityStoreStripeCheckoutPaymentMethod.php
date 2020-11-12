@@ -57,6 +57,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
         $this->set('stripeCheckoutTestPrivateApiKey', Config::get('community_store_stripe_checkout.testPrivateApiKey'));
         $this->set('stripeCheckoutLivePrivateApiKey', Config::get('community_store_stripe_checkout.livePrivateApiKey'));
         $this->set('stripeCheckoutSigningSecretKey', Config::get('community_store_stripe_checkout.signingSecretKey'));
+        $this->set('stripeCheckoutTestSigningSecretKey', Config::get('community_store_stripe_checkout.testSigningSecretKey'));
         $this->set('form', Application::getFacadeApplication()->make("helper/form"));
         $this->set('stripeCheckoutCurrencies', $this->getCurrencies());
     }
@@ -70,6 +71,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
         Config::save('community_store_stripe_checkout.testPrivateApiKey', $data['stripeCheckoutTestPrivateApiKey']);
         Config::save('community_store_stripe_checkout.livePrivateApiKey', $data['stripeCheckoutLivePrivateApiKey']);
         Config::save('community_store_stripe_checkout.signingSecretKey', $data['stripeCheckoutSigningSecretKey']);
+        Config::save('community_store_stripe_checkout.testSigningSecretKey', $data['stripeCheckoutTestSigningSecretKey']);
     }
 
     public function validate($args, $e)
@@ -225,11 +227,12 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
 
         if ($mode == 'live') {
             $secretKey = Config::get('community_store_stripe_checkout.livePrivateApiKey');
+            $signingSecretKey = Config::get('community_store_stripe_checkout.signingSecretKey');
         } else {
             $secretKey = Config::get('community_store_stripe_checkout.testPrivateApiKey');
+            $signingSecretKey = Config::get('community_store_stripe_checkout.testSigningSecretKey');
         }
 
-        $signingSecretKey = Config::get('community_store_stripe_checkout.signingSecretKey');
 
         if ($secretKey && $signingSecretKey) {
             \Stripe\Stripe::setApiKey($secretKey);

@@ -40,8 +40,16 @@ extract($vars);
 </p>
 
 <p><?= t('After creating the webhook, the Signing Secret can be found within webhook details page'); ?></p>
+
 <div class="form-group">
-    <?=$form->label('stripeCheckoutSigningSecretKey', t('Signing Secret Key'))?>
+    <?=$form->label('stripeCheckoutTestSigningSecretKey', t('Test Signing Secret Key'))?>
+    <input type="text" name="stripeCheckoutTestSigningSecretKey" value="<?=$stripeCheckoutTestSigningSecretKey?>" class="form-control">
+</div>
+
+
+<div class="form-group">
+    <?=$form->label('stripeCheckoutSigningSecretKey', t('Live Signing Secret Key'))?>
     <input type="text" name="stripeCheckoutSigningSecretKey" value="<?=$stripeCheckoutSigningSecretKey?>" class="form-control">
 </div>
+
 
