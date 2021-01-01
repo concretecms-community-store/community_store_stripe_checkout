@@ -10,7 +10,7 @@ extract($vars);
             // Open Checkout with further options
             var currentpmid = $('input[name="payment-method"]:checked:first').data('payment-method-id');
 
-            if (currentpmid == <?= $pmID; ?>) {
+            if (currentpmid === <?= $pmID; ?>) {
                 $(this).prop('disabled', true);
                 $(this).val('<?= t('Processing...'); ?>');
 
