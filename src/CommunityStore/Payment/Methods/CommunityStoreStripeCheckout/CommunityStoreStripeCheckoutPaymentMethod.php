@@ -122,7 +122,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             $secretKey = Config::get('community_store_stripe_checkout.testPrivateApiKey');
         }
 
-        $referrer = $this->request->server->get('HTTP_REFERER');;
+        $referrer = $this->request->server->get('HTTP_REFERER');
         $c = \Page::getByPath(parse_url($referrer, PHP_URL_PATH));
         $al = Section::getBySectionOfSite($c);
         $langpath = '';

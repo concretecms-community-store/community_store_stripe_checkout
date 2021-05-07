@@ -5,6 +5,7 @@ namespace Concrete\Package\CommunityStoreStripeCheckout;
 use \Concrete\Core\Package\Package;
 use \Concrete\Core\Support\Facade\Route;
 use \Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as PaymentMethod;
+use Whoops\Exception\ErrorException;
 
 
 class Controller extends Package
@@ -37,6 +38,10 @@ class Controller extends Package
 
     public function install()
     {
+        if (!@include(__DIR__ . '/vendor/autoload.php')) {
+            throw new ErrorException(t('Third party libraries not installed. Use a release version of this add-on with libraries pre-installed, or run composer install against the package folder.'));
+        }
+
         $pkg = parent::install();
         $pm = new PaymentMethod();
         $pm->add('community_store_stripe_checkout','Stripe Checkout',$pkg);
