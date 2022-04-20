@@ -3,12 +3,12 @@ extract($vars);
 ?>
 <div class="form-group">
     <?= $form->label('invoiceMinimum', t('Minimum Order Value'))?>
-    <?= $form->number("stripeCheckoutMinimum", $stripeCheckoutMinimum); ?>
+    <?= $form->number("stripeCheckoutMinimum", $stripeCheckoutMinimum, ['step'=>'0.01']); ?>
 </div>
 
 <div class="form-group">
     <?= $form->label('invoiceMaximum', t('Maximum Order Value'))?>
-    <?= $form->number("stripeCheckoutMaximum", $stripeCheckoutMaximum); ?>
+    <?= $form->number("stripeCheckoutMaximum", $stripeCheckoutMaximum, ['step'=>'0.01']); ?>
 </div>
 
 <div class="form-group">
