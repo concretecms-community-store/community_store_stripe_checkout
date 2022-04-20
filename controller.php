@@ -12,7 +12,7 @@ class Controller extends Package
 {
     protected $pkgHandle = 'community_store_stripe_checkout';
     protected $appVersionRequired = '8.0';
-    protected $pkgVersion = '1.0.1';
+    protected $pkgVersion = '1.0.2';
     protected $packageDependencies = ['community_store'=>'2.0'];
 
     public function on_start()

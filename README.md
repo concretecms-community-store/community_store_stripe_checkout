@@ -1,5 +1,5 @@
 # Community Store Stripe Checkout
-Stripe Checkout payment add-on for Community Store for concrete5
+Stripe Checkout payment add-on for Community Store for Concrete CMS
 
 https://stripe.com/docs/payments/checkout
 
@@ -9,7 +9,7 @@ If your business is based in the European Economic Area (EEA) and you serve cust
 ## Setup
 Install Community Store First.
 
-Download a 'release' zip of the add-on, unzip this to the packages folder of your concrete5 install (alongside the community_store folder) and install via the dashboard.
+Download a 'release' zip of the add-on, unzip this to the packages folder of your Concrete CMS install (alongside the community_store folder) and install via the dashboard.
 
 Once installed, configure the payment method through the Settings/Payments dashboard section for 'Store'. 
 You will need to log into Stripe's Dashboard, and through the Developers section copy in test and live API Keys.

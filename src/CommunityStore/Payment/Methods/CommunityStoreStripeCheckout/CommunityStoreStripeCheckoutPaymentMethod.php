@@ -58,6 +58,8 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
         $this->set('stripeCheckoutLivePrivateApiKey', Config::get('community_store_stripe_checkout.livePrivateApiKey'));
         $this->set('stripeCheckoutSigningSecretKey', Config::get('community_store_stripe_checkout.signingSecretKey'));
         $this->set('stripeCheckoutTestSigningSecretKey', Config::get('community_store_stripe_checkout.testSigningSecretKey'));
+        $this->set('stripeCheckoutMinimum', Config::get('community_store_stripe_checkout.minimum'));
+        $this->set('stripeCheckoutMaximum', Config::get('community_store_stripe_checkout.maximum'));
         $this->set('form', Application::getFacadeApplication()->make("helper/form"));
         $this->set('stripeCheckoutCurrencies', $this->getCurrencies());
     }
@@ -72,6 +74,8 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
         Config::save('community_store_stripe_checkout.livePrivateApiKey', $data['stripeCheckoutLivePrivateApiKey']);
         Config::save('community_store_stripe_checkout.signingSecretKey', $data['stripeCheckoutSigningSecretKey']);
         Config::save('community_store_stripe_checkout.testSigningSecretKey', $data['stripeCheckoutTestSigningSecretKey']);
+        Config::save('community_store_stripe_checkout.minimum', $data['stripeCheckoutMinimum']);
+        Config::save('community_store_stripe_checkout.maximum', $data['stripeCheckoutMaximum']);
     }
 
     public function validate($args, $e)
@@ -101,9 +105,30 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
         return ['error' => 0, 'transactionReference' => ''];
     }
 
+
     public function getPaymentMinimum()
     {
-        return 0.5;
+        $defaultMin = 0.5;
+
+        $minconfig = trim(Config::get('community_store_stripe_checkout.minimum'));
+
+        if ('' == $minconfig) {
+            return $defaultMin;
+        } else {
+            return max($minconfig, $defaultMin);
+        }
+    }
+
+    public function getPaymentMaximum()
+    {
+        $defaultMax = 1000000000;
+
+        $maxconfig = trim(Config::get('community_store_stripe_checkout.maximum'));
+        if ('' == $maxconfig) {
+            return $defaultMax;
+        } else {
+            return min($maxconfig, $defaultMax);
+        }
     }
 
     public function getName()

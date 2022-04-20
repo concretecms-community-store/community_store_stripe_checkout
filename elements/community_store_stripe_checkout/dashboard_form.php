@@ -2,33 +2,43 @@
 extract($vars);
 ?>
 <div class="form-group">
-    <?=$form->label('stripeCheckoutCurrency', t('Currency'))?>
-    <?=$form->select('stripeCheckoutCurrency', $stripeCheckoutCurrencies, $stripeCheckoutCurrency)?>
+    <?= $form->label('invoiceMinimum', t('Minimum Order Value'))?>
+    <?= $form->number("stripeCheckoutMinimum", $stripeCheckoutMinimum); ?>
 </div>
 
 <div class="form-group">
-    <?=$form->label('stripeCheckoutMode', t('Mode'))?>
-    <?=$form->select('stripeCheckoutMode', ['test' => t('Test'), 'live' => t('Live')], $stripeCheckoutMode)?>
+    <?= $form->label('invoiceMaximum', t('Maximum Order Value'))?>
+    <?= $form->number("stripeCheckoutMaximum", $stripeCheckoutMaximum); ?>
+</div>
+
+<div class="form-group">
+    <?= $form->label('stripeCheckoutCurrency', t('Currency'))?>
+    <?= $form->select('stripeCheckoutCurrency', $stripeCheckoutCurrencies, $stripeCheckoutCurrency)?>
+</div>
+
+<div class="form-group">
+    <?= $form->label('stripeCheckoutMode', t('Mode'))?>
+    <?= $form->select('stripeCheckoutMode', ['test' => t('Test'), 'live' => t('Live')], $stripeCheckoutMode)?>
 </div>
 
 <div class="form-group">
     <?=$form->label('stripeCheckoutTestPublicApiKey', t('Test Publishable Key'))?>
-    <input type="text" name="stripeCheckoutTestPublicApiKey" value="<?=$stripeCheckoutTestPublicApiKey?>" class="form-control">
+    <?= $form->text("stripeCheckoutTestPublicApiKey", $stripeCheckoutTestPublicApiKey); ?>
 </div>
 
 <div class="form-group">
-    <?=$form->label('stripeCheckoutTestPrivateApiKey', t('Test Secret Key'))?>
-    <input type="text" name="stripeCheckoutTestPrivateApiKey" value="<?=$stripeCheckoutTestPrivateApiKey?>" class="form-control">
+    <?= $form->label('stripeCheckoutTestPrivateApiKey', t('Test Secret Key'))?>
+    <?= $form->text("stripeCheckoutTestPrivateApiKey", $stripeCheckoutTestPrivateApiKey); ?>
 </div>
 
 <div class="form-group">
-    <?=$form->label('stripeCheckoutLivePublicApiKey', t('Live Publishable Key'))?>
-    <input type="text" name="stripeCheckoutLivePublicApiKey" value="<?=$stripeCheckoutLivePublicApiKey?>" class="form-control">
+    <?= $form->label('stripeCheckoutLivePublicApiKey', t('Live Publishable Key'))?>
+    <?= $form->text("stripeCheckoutLivePublicApiKey", $stripeCheckoutLivePublicApiKey); ?>
 </div>
 
 <div class="form-group">
-    <?=$form->label('stripeCheckoutLivePrivateApiKey', t('Live Secret Key'))?>
-    <input type="text" name="stripeCheckoutLivePrivateApiKey" value="<?=$stripeCheckoutLivePrivateApiKey?>" class="form-control">
+    <?= $form->label('stripeCheckoutLivePrivateApiKey', t('Live Secret Key'))?>
+    <?= $form->text("stripeCheckoutLivePrivateApiKey", $stripeCheckoutLivePrivateApiKey); ?>
 </div>
 
 <?=$form->label('webhook', t('Required Webhook'))?>
@@ -42,14 +52,14 @@ extract($vars);
 <p><?= t('After creating the webhook, the Signing Secret can be found within webhook details page'); ?></p>
 
 <div class="form-group">
-    <?=$form->label('stripeCheckoutTestSigningSecretKey', t('Test Signing Secret Key'))?>
-    <input type="text" name="stripeCheckoutTestSigningSecretKey" value="<?=$stripeCheckoutTestSigningSecretKey?>" class="form-control">
+    <?= $form->label('stripeCheckoutTestSigningSecretKey', t('Test Signing Secret Key'))?>
+    <?= $form->text("stripeCheckoutTestSigningSecretKey", $stripeCheckoutTestSigningSecretKey); ?>
 </div>
 
 
 <div class="form-group">
-    <?=$form->label('stripeCheckoutSigningSecretKey', t('Live Signing Secret Key'))?>
-    <input type="text" name="stripeCheckoutSigningSecretKey" value="<?=$stripeCheckoutSigningSecretKey?>" class="form-control">
+    <?= $form->label('stripeCheckoutSigningSecretKey', t('Live Signing Secret Key'))?>
+    <?= $form->text("stripeCheckoutSigningSecretKey", $stripeCheckoutSigningSecretKey); ?>
 </div>
 
 
