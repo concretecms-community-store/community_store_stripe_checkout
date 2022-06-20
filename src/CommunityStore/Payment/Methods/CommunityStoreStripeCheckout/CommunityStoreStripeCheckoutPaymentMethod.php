@@ -192,7 +192,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                             }
 
                             if (count($optionOutput) > 0) {
-                                $stripeItem['description'] = implode("\n", $optionOutput);
+                                $stripeItem['description'] = substr(implode("\n", $optionOutput), 0, 5000);
                             }
                         }
 
