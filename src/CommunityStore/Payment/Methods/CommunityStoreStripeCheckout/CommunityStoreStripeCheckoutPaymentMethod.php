@@ -285,11 +285,17 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             // Handle the checkout.session.completed event
             if ($event->type == 'checkout.session.completed') {
                 $session = $event->data->object;
-                $order = StoreOrder::getByID($session->client_reference_id);
 
-                if ($order) {
-                    $order->completeOrder($session->payment_intent);
-                    $order->updateStatus(StoreOrderStatus::getStartingStatus()->getHandle());
+                if ($session->client_reference_id) {
+                    $order = StoreOrder::getByID($session->client_reference_id);
+
+                    if ($order) {
+                        $order->completeOrder($session->payment_intent);
+                        $order->updateStatus(StoreOrderStatus::getStartingStatus()->getHandle());
+                        $success = true;
+                    }
+                } else {
+                    // if we don't have an order ID, ignore it, not a transactions from Community Store
                     $success = true;
                 }
             }
