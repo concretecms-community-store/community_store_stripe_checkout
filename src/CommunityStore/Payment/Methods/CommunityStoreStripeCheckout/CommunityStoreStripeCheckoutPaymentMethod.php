@@ -168,18 +168,16 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                 foreach ($items as $item) {
                     if ($item->getPricePaid() > 0) {
 
-                        $stripeItem =
-                            ['name' => $item->getProductName() . ($item->getSKU() ? '(' . $item->getSKU() . ')' : ''),
-                                'amount' => round($item->getPricePaid() * $currencyMultiplier, 0),
-                                'quantity' => $item->getQty(),
-                                'currency' => $currency
-                            ];
+                        $stripeItem['price_data']['product_data']['name'] = $item->getProductName() . ($item->getSKU() ? '(' . $item->getSKU() . ')' : '');
 
-                        $imagesrc = '';
+                        $stripeItem['price_data']['unit_amount'] = round($item->getPricePaid() * $currencyMultiplier, 0);
+                        $stripeItem['price_data']['currency'] = $currency;
+                        $stripeItem['quantity'] = $item->getQty();
+
                         $fileObj = $item->getProductObject()->getImageObj();
                         if (is_object($fileObj)) {
                             $imagesrc = $fileObj->getURL();
-                            $stripeItem['images'] = [$imagesrc];
+                            $stripeItem['price_data']['product_data']['images'] = [$imagesrc];
                         }
 
                         $options = $item->getProductOptions();
@@ -192,7 +190,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                             }
 
                             if (count($optionOutput) > 0) {
-                                $stripeItem['description'] = substr(implode("\n", $optionOutput), 0, 5000);
+                                $stripeItem['price_data']['product_data']['description'] = substr(implode("\n", $optionOutput), 0, 5000);
                             }
                         }
 
@@ -204,12 +202,12 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             if ($order->isShippable()) {
                 $shippingTotal = $order->getShippingTotal();
                 if ($shippingTotal > 0) {
-                    $shippingItem = [
-                        'name' => $order->getShippingMethodName(),
-                        'amount' => round($shippingTotal * $currencyMultiplier, 0),
-                        'currency' => $currency,
-                        'quantity' => 1
-                    ];
+
+                    $shippingItem['price_data']['product_data']['name'] = $order->getShippingMethodName();
+
+                    $shippingItem['price_data']['unit_amount'] = round($shippingTotal * $currencyMultiplier, 0);
+                    $shippingItem['price_data']['currency'] = $currency;
+                    $shippingItem['quantity'] = 1;
 
                     $lineitems[] = $shippingItem;
                 }
@@ -220,17 +218,20 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             if (!empty($taxes)) {
                 foreach ($order->getTaxes() as $tax) {
                     if ($tax['amount'] && $tax['amount'] > 0) {
-                        $taxItem = ['name' => $tax['label'],
-                            'amount' => round($tax['amount'] * $currencyMultiplier, 0),
-                            'currency' => $currency,
-                            'quantity' => 1
-                        ];
+
+                        $taxItem['price_data']['product_data']['name'] =  $tax['label'];
+
+                        $taxItem['price_data']['unit_amount'] = round($tax['amount'] * $currencyMultiplier, 0);
+                        $taxItem['price_data']['currency'] = $currency;
+                        $taxItem['quantity'] = 1;
+
                         $lineitems[] = $taxItem;
                     }
                 }
             }
 
             \Stripe\Stripe::setApiKey($secretKey);
+            \Stripe\Stripe::setApiVersion(\Concrete\Package\CommunityStoreStripeCheckout\Controller::$stripeAPIVersion);
             $session = \Stripe\Checkout\Session::create([
                 'client_reference_id' => $order->getOrderID(),
                 'payment_method_types' => ['card'],
@@ -238,6 +239,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                 'line_items' => $lineitems,
                 'success_url' => URL::to($langpath . '/checkout/complete'),
                 'cancel_url' => URL::to($langpath . '/checkout'),
+                'mode' => 'payment'
             ]);
 
             echo $session['id'];
@@ -261,6 +263,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
 
         if ($secretKey && $signingSecretKey) {
             \Stripe\Stripe::setApiKey($secretKey);
+            \Stripe\Stripe::setApiVersion(\Concrete\Package\CommunityStoreStripeCheckout\Controller::$stripeAPIVersion);
 
             $payload = @file_get_contents('php://input');
             $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
