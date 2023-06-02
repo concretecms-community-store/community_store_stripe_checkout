@@ -45,8 +45,8 @@ extract($vars);
 <p><?= t('Within the Stripe Dashboard configure a Webhook endpoint for the following URL'); ?>:
     <br /><a href="<?= \URL::to('/checkout/stripecheckoutresponse'); ?>"><?= \URL::to('/checkout/stripecheckoutresponse'); ?></a></p>
 <p><?= t('With the Events to send'); ?>:
-        <span class="label label-primary">checkout.session.completed</span>
-        <span class="label label-primary">charge.refunded</span>
+        <span class="label label-primary badge bg-primary">checkout.session.completed</span>
+        <span class="label label-primary  badge bg-primary">charge.refunded</span>
 </p>
 
 <p><?= t('After creating the webhook, the Signing Secret can be found within webhook details page'); ?></p>

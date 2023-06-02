@@ -36,7 +36,7 @@ extract($vars);
                                         var stripe = Stripe('<?php echo $publicCheckoutAPIKey; ?>');
 
                                         stripe.redirectToCheckout({
-                                            sessionId: data,
+                                            sessionId: data.trim(),
                                         }).then(function (result) {
                                             // If `redirectToCheckout` fails due to a browser or network
                                             // error, display the localized error message to your customer

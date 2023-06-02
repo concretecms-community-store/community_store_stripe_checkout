@@ -6,6 +6,7 @@ use Concrete\Core\Support\Facade\Config;
 use Concrete\Core\Support\Facade\Session;
 use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Multilingual\Page\Section\Section;
+use Concrete\Package\CommunityStore\Src\CommunityStore\Customer\Customer;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Order\Order as StoreOrder;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Utilities\Price as StorePrice;;
 use Concrete\Package\CommunityStore\Src\CommunityStore\Payment\Method as StorePaymentMethod;
@@ -230,12 +231,14 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
                 }
             }
 
+            $customer = new Customer();
+
             \Stripe\Stripe::setApiKey($secretKey);
             \Stripe\Stripe::setApiVersion(\Concrete\Package\CommunityStoreStripeCheckout\Controller::$stripeAPIVersion);
             $session = \Stripe\Checkout\Session::create([
                 'client_reference_id' => $order->getOrderID(),
                 'payment_method_types' => ['card'],
-                'customer_email' => $order->getAttribute('email'),
+                'customer_email' => $customer->getEmail(),
                 'line_items' => $lineitems,
                 'success_url' => URL::to($langpath . '/checkout/complete'),
                 'cancel_url' => URL::to($langpath . '/checkout'),
@@ -312,7 +315,7 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
 
                 if ($order) {
                     $order->setRefunded(new \DateTime());
-                    $order->setRefundReason($session->refunds->data->reason);
+                    $order->setRefundReason(t('Refunded via Stripe Dashboard'));
                     $order->save();
                     $success = true;
                 }
