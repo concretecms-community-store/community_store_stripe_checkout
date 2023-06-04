@@ -1,6 +1,8 @@
 # Community Store Stripe Checkout
 Stripe Checkout payment add-on for Community Store for Concrete CMS
 
+Requires version 2.5+ of Community Store.
+
 https://stripe.com/docs/payments/checkout
 
 This is a Strong Customer Authentication (SCA) compliant payment method for Stripe, required by European regulation from September 2019.
