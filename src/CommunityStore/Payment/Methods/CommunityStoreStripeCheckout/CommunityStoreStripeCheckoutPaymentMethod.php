@@ -237,7 +237,6 @@ class CommunityStoreStripeCheckoutPaymentMethod extends StorePaymentMethod
             \Stripe\Stripe::setApiVersion(\Concrete\Package\CommunityStoreStripeCheckout\Controller::$stripeAPIVersion);
             $session = \Stripe\Checkout\Session::create([
                 'client_reference_id' => $order->getOrderID(),
-                'payment_method_types' => ['card'],
                 'customer_email' => $customer->getEmail(),
                 'line_items' => $lineitems,
                 'success_url' => URL::to($langpath . '/checkout/complete'),
