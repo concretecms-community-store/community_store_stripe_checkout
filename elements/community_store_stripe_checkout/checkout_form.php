@@ -4,59 +4,77 @@ extract($vars);
 
 
 <script>
-    $(window).on('load', function() {
+    (function () {
+        // the payment methods can be loaded more than once, only listen for clicks once
+        if (window.communityStoreStripeCheckoutInit) {
+            return;
+        }
+        window.communityStoreStripeCheckoutInit = true;
 
-        $('.store-btn-complete-order').on('click', function (e) {
-            // Open Checkout with further options
-            var currentpmid = $('input[name="payment-method"]:checked:first').data('payment-method-id');
+        var paymentMethodID = <?= json_encode((string) $pmID); ?>;
 
-            if (currentpmid === <?= $pmID; ?>) {
-                $(this).prop('disabled', true);
-                $(this).val('<?= t('Processing...'); ?>');
+        function loadStripe() {
+            return new Promise(function (resolve, reject) {
+                if (window.Stripe) {
+                    resolve();
+                    return;
+                }
+                var script = document.createElement('script');
+                script.src = 'https://js.stripe.com/v3/';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
 
-                $.getScript( "https://js.stripe.com/v3/" )
-                    .done(function( script ) {
-
-                        var paymentform = $('#store-checkout-form-group-payment');
-                        var data = paymentform.serialize();
-                        $.ajax({
-                            url: paymentform.attr('action'),
-                            type: 'post',
-                            cache: false,
-                            data: data,
-                            dataType: 'text',
-                            success: function(data) {
-                                $.ajax({
-                                    url: '<?= \URL::to('/checkout/stripecheckoutcreatesession'); ?>',
-                                    type: 'get',
-                                    cache: false,
-                                    dataType: 'text',
-                                    success: function(data) {
-
-                                        var stripe = Stripe('<?php echo $publicCheckoutAPIKey; ?>');
-
-                                        stripe.redirectToCheckout({
-                                            sessionId: data.trim(),
-                                        }).then(function (result) {
-                                            // If `redirectToCheckout` fails due to a browser or network
-                                            // error, display the localized error message to your customer
-                                            // using `result.error.message`.
-                                        });
-                                    }
-                                });
-
-                            }
-                        });
-
-                    })
-                    .fail(function( jqxhr, settings, exception ) {
-
-                    });
-
-
-                e.preventDefault();
+        document.addEventListener('click', function (e) {
+            var button = e.target.closest ? e.target.closest('.store-btn-complete-order') : null;
+            if (!button) {
+                return;
             }
-        });
 
-    });
+            var selected = document.querySelector('input[name="payment-method"]:checked');
+            if (!selected || selected.getAttribute('data-payment-method-id') !== paymentMethodID) {
+                return;
+            }
+
+            e.preventDefault();
+
+            var label = button.value;
+            button.disabled = true;
+            button.value = <?= json_encode(t('Processing...')); ?>;
+
+            var paymentform = document.getElementById('store-checkout-form-group-payment');
+
+            loadStripe()
+                .then(function () {
+                    // create the order
+                    return communityStore.request(paymentform.getAttribute('action'), {
+                        method: 'POST',
+                        data: communityStore.serialize(paymentform)
+                    });
+                })
+                .then(function () {
+                    // create the Stripe checkout session
+                    return communityStore.request(<?= json_encode((string) \Concrete\Core\Support\Facade\Url::to('/checkout/stripecheckoutcreatesession')); ?>);
+                })
+                .then(function (sessionID) {
+                    var stripe = Stripe(<?= json_encode((string) $publicCheckoutAPIKey); ?>);
+
+                    return stripe.redirectToCheckout({
+                        sessionId: sessionID.trim()
+                    });
+                })
+                .then(function (result) {
+                    // redirectToCheckout only resolves if it fails, e.g. due to a browser or network error
+                    if (result && result.error) {
+                        throw result.error;
+                    }
+                })
+                .catch(function () {
+                    button.disabled = false;
+                    button.value = label;
+                });
+        });
+    })();
 </script>
